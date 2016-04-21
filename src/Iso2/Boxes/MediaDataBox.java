@@ -13,9 +13,11 @@ import Iso14496.Box;
  */
 public class MediaDataBox extends Box{
     byte[] data;
-    
-    public MediaDataBox(String boxtype) {
-        //super("mdat");
+
+    public MediaDataBox(int boxtype) {
+        super(boxtype);
     }
+    
+
     
 }

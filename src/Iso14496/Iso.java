@@ -7,6 +7,7 @@ package Iso14496;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -19,12 +20,17 @@ import java.util.logging.Logger;
  *
  * @author mac
  */
-public class Iso extends Box {
+public class Iso {
     
     public static final int FTYP = 0x66747970;
     public static final int FREE = 0x66726565;
     public static final int MDAT = 0x6D646174;
     public static final int MOOV = 0x6D6F6F76;
+    public static final int MVHD = 0x6D766864;
+    
+    int size;
+    FileOutputStream fop = null;
+    File file;
     
     
     byte[] fullData;
@@ -32,6 +38,8 @@ public class Iso extends Box {
     public Iso(File videoFile) throws FileNotFoundException, IOException {
 
          // Testing only! 
+        byte[] header = {0x00, 0x00, 0x00, 0x18, 0x66, 0x74 ,0x79 ,0x70 ,0x4D, 0x34, 0x41, 0x20, 0x00 ,0x00 ,0x02 ,0x00 ,0x69, 0x73, 0x6F, 0x6D ,0x69 ,0x73, 0x6F ,0x32 ,0x00, 0x00 ,0x00, 0x08, 0x66 ,0x72 ,0x65, 0x65};
+        //byte[] moovHeader = {0x6D 0x6F 0x6F 0x76 0x00 0x00 0x00 0x6C 0x6D 0x76 0x68 0x64 0x00 0x00 0x00 0x00 0x7C 0x25 0xB0 0x80 0xCF 0xF0 0x5A 0x35 0x00 0x00 0x03 0xE8 0x00 0x00 0x34 0xC0 0x00 0x01 0x00 0x00 0x01 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x01 0x00 0x00 0x00 0x00 0x00 0x00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 03};
         
         fullData = Files.readAllBytes(videoFile.toPath());
         size = IsoReader.readIntAt(fullData , 0);
@@ -73,6 +81,7 @@ public class Iso extends Box {
         int stszSampleSizeLoc = 2103830 + 8;
         int stszSampleCountLoc = 2103830 + 8 + 4;
         int stszSampleSizesLoc = 2103830 + 8 + 8;
+        int totalByteCount = 0;
         int stszSampleSize = IsoReader.readIntAt(fullData , stszSampleSizeLoc) ;
         int stszSampleCount = IsoReader.readIntAt(fullData , stszSampleCountLoc) ;
         System.out.println("Sample Size " + stszSampleSize);
@@ -82,11 +91,12 @@ public class Iso extends Box {
         
         for(int n = 0 ; n < stszSampleCount ; n ++){
             sampleSizes[n] = IsoReader.readIntAt(fullData , stszSampleSizesLoc + (n * 4)) ;
+            totalByteCount += sampleSizes[n];
             //System.out.println(sampleSizes[n]);
         }
-       
+        System.out.println("total Byte count " + totalByteCount);
         
-        //[index][offset, number of samples, sample size ]  
+        //[index][offset, number of samples, byte size ]  
         int[][] totalData = new int[stcoChunkCount][3];  
         for (int n =0; n < stcoChunkCount; n++){
             totalData[n][0] = offsets[n];
@@ -125,33 +135,76 @@ public class Iso extends Box {
         //Now add samples to chunk for each run
         
         int currentIndex =0;
+        int currentSampleIndex = 0;
         for(int n = 0; n< stscEntryCount; n++){
             //chunkRuns[n]
             for(int i = 0; i < chunkRuns[n]; i++ ){
                 totalData[currentIndex][1] = sampleTableBox[n][1];
+                totalData[currentIndex][2] = 0;
+                for(int m = 0; m < sampleTableBox[n][1]; m++){
+                    totalData[currentIndex][2] += sampleSizes[currentSampleIndex];
+                    currentSampleIndex++;
+                }
+                
                 currentIndex++;
             }      
             //totalData[n][1] = 0; //Set num samples per chunk
         }
         
-        //System.out.println("Total test chunks " + totalTestChunks);
-        
+
+     
         
         
         
         
         //now sum up the count
         int testSampleCount = 0;
-        int testSampleSizeCount = 0;
+        int testByteCount = 0;
         for (int n = 0; n < stcoChunkCount; n++) {
-            //testChunkCount += totalData[n][0];
+            testByteCount += totalData[n][2];
             testSampleCount += totalData[n][1];
         }
         System.out.println("Total sample tally " + testSampleCount);
-        //System.out.println("Total testSample " + totalTestSamples);
+        System.out.println("Total Bytes " + testByteCount);
         
         //stsz
         //stco
+        try {
+            file = new File("./testoutput.mp4a");
+            fop = new FileOutputStream(file);
+
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            // get the content in bytes
+            //byte[] contentInBytes = content.getBytes();
+
+            //fop.write(contentInBytes);
+            fop.write(header);
+            fop.write(intToByteArray(totalByteCount));
+            fop.write(MDAT);
+            for (int n = 0; n < stcoChunkCount; n++) {
+                //[n][0] offset
+                //[n][2] byte count
+                
+                fop.write(fullData, totalData[n][0] , totalData[n][2]);
+                //fop.write(fullData, 0 , 20);
+            }
+            
+            
+            fop.flush();
+            fop.close();
+
+        } catch (IOException e) {
+
+        }
     }
+
+    public byte[] intToByteArray(int input){
+        return ByteBuffer.allocate(4).putInt(input).array();
+    }
+    
+    
 
 }

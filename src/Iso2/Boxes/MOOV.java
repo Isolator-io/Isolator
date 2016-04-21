@@ -3,20 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Iso14496;
+package Iso2.Boxes;
+
+import Iso14496.Box;
 
 /**
  *
  * @author mac
  */
-public class FullBox extends Box{
-    byte version;
-    byte[] flags;
-
-    public FullBox(int boxtype) {
-        super(boxtype);
-    }
+public class MOOV extends Box{
     
-
+    public MOOV() {
+        super(Box.MOOV);
+    }
     
 }

@@ -15,9 +15,11 @@ public class FileTypeBox extends Box{
     int majorBrand;
     int minorVersion;
     int[] compatibleBrands;
-    
-    public FileTypeBox(String boxtype) {
-        //super("ftyp");
+
+    public FileTypeBox(int boxtype) {
+        super(boxtype);
     }
+    
+ 
     
 }
