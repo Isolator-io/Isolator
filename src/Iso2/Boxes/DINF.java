@@ -15,13 +15,13 @@ import java.util.logging.Logger;
  *
  * @author mac
  */
-public class TRAK extends Box{
-    
-    public TRAK() {
-        super(Box.TRAK);
-    }
+public class DINF extends Box{
 
-    @Override
+    public DINF() {
+        super(Box.DINF);
+    }
+    
+        @Override
     public byte[] toBinary() {
         ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
         if (children.size() > 0) {

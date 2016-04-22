@@ -19,12 +19,12 @@ public abstract class Box {
     public static final int FTYP = 0x66747970;
     public static final int FREE = 0x66726565;
     public static final int MDAT = 0x6D646174;
-    public static final int MOOV = 0x6D6F6F76;
+    public static final int MOOV = 0x6D6F6F76; 
     public static final int MVHD = 0x6D766864;
     public static final int TRAK = 0x7472616B;
     public static final int TKHD = 0x746B6864;
     public static final int MDIA = 0x6D646961;
-    public static final int MDHD = 0x6D646961;
+    public static final int MDHD = 0x6D646864;
     public static final int HDLR = 0x68646C72;
     public static final int SOUN = 0x736F756E;
     public static final int MINF = 0x6D696E66;
@@ -39,16 +39,22 @@ public abstract class Box {
     public static final int STSC = 0x73747363;
     public static final int STSZ = 0x7374737A;
     public static final int STCO = 0x7374636F;
+    public static final int MP4A = 0x6D703461;
+    public static final int EDTS = 0x65647473;
+    public static final int ELST = 0x656C7374;
+ 
+
      
-    ByteArrayOutputStream byteStream;       
-    ArrayList<Box> children;
-    int internalSize;
-    int type;
+    protected ByteArrayOutputStream byteStream;       
+    protected ArrayList<Box> children;
+    protected int internalSize;
+    protected int type;
     
   
-    public Box(int boxtype){
+    public Box(int boxType){
         children = new ArrayList<Box>();
         byteStream = new ByteArrayOutputStream();
+        type = boxType;
         
     }
     
@@ -65,6 +71,16 @@ public abstract class Box {
         }
         return totalSize;
     }
+    
+    public byte[] intToByteArray(int input){
+        return ByteBuffer.allocate(4).putInt(input).array();
+    }
+    
+    public byte[] shortToByteArray(short input){
+        return ByteBuffer.allocate(2).putShort(input).array();
+    }
+    
+    public abstract byte[] toBinary();
     
     
     /*

@@ -15,10 +15,10 @@ import java.util.logging.Logger;
  *
  * @author mac
  */
-public class TRAK extends Box{
-    
-    public TRAK() {
-        super(Box.TRAK);
+public class MINF extends Box{
+
+    public MINF() {
+        super(Box.MINF);
     }
 
     @Override

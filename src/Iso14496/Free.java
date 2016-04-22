@@ -3,21 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Iso14496.Boxes;
-
-import Iso14496.Box;
+package Iso14496;
 
 /**
  *
  * @author mac
  */
-public class MediaDataBox extends Box{
-    byte[] data;
-
-    public MediaDataBox(int boxtype) {
-        super(boxtype);
-    }
-    
-
+class Free {
     
 }

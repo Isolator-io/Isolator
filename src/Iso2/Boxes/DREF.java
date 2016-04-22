@@ -6,6 +6,7 @@
 package Iso2.Boxes;
 
 import Iso14496.Box;
+import Iso14496.FullBox;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -15,13 +16,14 @@ import java.util.logging.Logger;
  *
  * @author mac
  */
-public class TRAK extends Box{
+public class DREF extends FullBox{
+    int entry_count;
     
-    public TRAK() {
-        super(Box.TRAK);
+    public DREF() {
+        super(Box.DREF);
     }
 
-    @Override
+        @Override
     public byte[] toBinary() {
         ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
         if (children.size() > 0) {
@@ -35,8 +37,10 @@ public class TRAK extends Box{
         }
         
         try {
-            byteStream.write(intToByteArray(8 + tempStream.size()));
+            byteStream.write(intToByteArray(16 + tempStream.size()));
             byteStream.write(intToByteArray(type));
+            byteStream.write(intToByteArray(0));
+            byteStream.write(intToByteArray(children.size()));
             byteStream.write(tempStream.toByteArray());
             
         } catch (IOException ex) {

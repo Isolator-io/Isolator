@@ -9,7 +9,7 @@ package Iso14496;
  *
  * @author mac
  */
-public class FullBox extends Box{
+public abstract class FullBox extends Box{
     byte version;
     byte[] flags;
 

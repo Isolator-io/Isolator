@@ -5,6 +5,8 @@
  */
 package Iso14496;
 
+import Iso2.Boxes.*;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -31,6 +33,9 @@ public class Iso {
     int size;
     FileOutputStream fop = null;
     File file;
+    
+    FileOutputStream fopTest = null;
+    File fileTest;
     
     
     byte[] fullData;
@@ -169,18 +174,32 @@ public class Iso {
         
         //stsz
         //stco
+        ByteArrayOutputStream byteStreamBuilder = new ByteArrayOutputStream(); 
+        
+        
         try {
             file = new File("./testoutput.mp4a");
-            fop = new FileOutputStream(file);
+            fop = new FileOutputStream(file , false);
+            
+            fileTest = new File("./test.m4a");
+            fopTest = new FileOutputStream(fileTest , false);
 
             if (!file.exists()) {
                 file.createNewFile();
+            }
+            
+            if (!fileTest.exists()) {
+                fileTest.createNewFile();
             }
 
             // get the content in bytes
             //byte[] contentInBytes = content.getBytes();
 
             //fop.write(contentInBytes);
+            
+            
+            
+            
             fop.write(header);
             fop.write(intToByteArray(totalByteCount));
             fop.write(MDAT);
@@ -189,12 +208,92 @@ public class Iso {
                 //[n][2] byte count
                 
                 fop.write(fullData, totalData[n][0] , totalData[n][2]);
+                byteStreamBuilder.write(fullData, totalData[n][0] , totalData[n][2]);
                 //fop.write(fullData, 0 , 20);
             }
             
             
             fop.flush();
             fop.close();
+            
+            
+            
+            
+            /*
+            After data is extracted, need to re-encode information as an mp4a file
+            */
+            FREE free = new FREE();
+            //free.setData(new byte[4]);
+            
+            FTYP ftyp = new FTYP();
+            ftyp.setMajorBrand(0x69736F6D);
+            ftyp.setMinorVersion(0x00000200);
+            ftyp.setCompatibleBrands(new int[] {0x69736F6D, 0x69736F32});
+            
+            MDAT mdat = new MDAT();
+            mdat.setData(byteStreamBuilder.toByteArray());
+            
+            MOOV moov = new MOOV();
+            MVHD mvhd = new MVHD();
+            TRAK trak = new TRAK();
+            TKHD tkhd = new TKHD();
+            EDTS edts = new EDTS();
+            ELST elst = new ELST();
+            MDIA mdia = new MDIA();
+            MDHD mdhd = new MDHD();
+            HDLR hdlr = new HDLR();
+            MINF minf = new MINF();
+            SMHD smhd = new SMHD();
+            DINF dinf = new DINF();
+            DREF dref = new DREF();
+            URL url = new URL();
+            STBL stbl = new STBL();
+            STSD stsd = new STSD();
+            MP4A mp4a = new MP4A();
+            ESDS esds = new ESDS();
+            
+            STTS stts = new STTS();
+            STSC stsc2 = new STSC();
+            STSZ stsz2 = new STSZ(sampleSizes);
+            STCO stco2 = new STCO();
+            
+            moov.addBox(mvhd);
+            moov.addBox(trak);
+            trak.addBox(tkhd);
+            trak.addBox(edts);
+            edts.addBox(elst);
+            trak.addBox(mdia);
+            mdia.addBox(mdhd);
+            mdia.addBox(hdlr);
+            mdia.addBox(minf);
+            minf.addBox(smhd);
+            minf.addBox(dinf);
+            dinf.addBox(dref);
+            dref.addBox(url);
+            minf.addBox(stbl);
+            stbl.addBox(stsd);
+            stsd.addBox(mp4a);
+            mp4a.addBox(esds);
+            stbl.addBox(stts);
+            stbl.addBox(stsc2);
+            stbl.addBox(stsz2);
+            stbl.addBox(stco2);
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            fopTest.write(ftyp.toBinary());
+            fopTest.write(free.toBinary());
+            fopTest.write(mdat.toBinary());
+            fopTest.write(moov.toBinary());
+            
+            fopTest.flush();
+            fopTest.close();
 
         } catch (IOException e) {
 
