@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Iso2.Boxes;
+package Iso14496.Boxes;
 
 import Iso14496.Box;
-import Iso14496.FullBox;
 import Iso14496.IsoReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,32 +16,35 @@ import java.util.logging.Logger;
  *
  * @author mac
  */
-public class STSZ extends FullBox{
-    int sample_size = 0;
-    int sample_count = 633;
-    int[] sample_table;
-   
-    public STSZ(int[] sample_table) {
-        super(Box.STSZ);
-        this.sample_table = sample_table;
+public class MDIA extends Box{
+
+    public MDIA() {
+        super(Box.MDIA);
     }
 
     @Override
     public byte[] toBinary() {
-        try {
-            byteStream.write(intToByteArray(12 + 4 * sample_count + 8 ) );
-            byteStream.write(intToByteArray(type));
-            byteStream.write(intToByteArray(0));
-            byteStream.write(intToByteArray(sample_size));
-            byteStream.write(intToByteArray(sample_count));
-            for(int n = 0 ; n < sample_count ; n++){
-                byteStream.write(intToByteArray(sample_table[n]));
+        ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
+        if (children.size() > 0) {
+            for (Box box : children) {
+                try {
+                    tempStream.write(box.toBinary());
+                } catch (IOException ex) {
+                    Logger.getLogger(MOOV.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
+        }
+        
+        try {
+            byteStream.write(intToByteArray(8 + tempStream.size()));
+            byteStream.write(intToByteArray(type));
+            byteStream.write(tempStream.toByteArray());
             
         } catch (IOException ex) {
-            Logger.getLogger(STSZ.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MOOV.class.getName()).log(Level.SEVERE, null, ex);
         }
-    return byteStream.toByteArray();
+        
+        return byteStream.toByteArray();
     }
 
     @Override

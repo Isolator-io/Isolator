@@ -5,7 +5,7 @@
  */
 package Iso14496;
 
-import Iso2.Boxes.*;
+import Iso14496.Boxes.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;

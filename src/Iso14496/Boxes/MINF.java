@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Iso2.Boxes;
+package Iso14496.Boxes;
 
 import Iso14496.Box;
-import Iso14496.FullBox;
 import Iso14496.IsoReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,14 +16,13 @@ import java.util.logging.Logger;
  *
  * @author mac
  */
-public class DREF extends FullBox{
-    int entry_count;
-    
-    public DREF() {
-        super(Box.DREF);
+public class MINF extends Box{
+
+    public MINF() {
+        super(Box.MINF);
     }
 
-        @Override
+    @Override
     public byte[] toBinary() {
         ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
         if (children.size() > 0) {
@@ -38,10 +36,8 @@ public class DREF extends FullBox{
         }
         
         try {
-            byteStream.write(intToByteArray(16 + tempStream.size()));
+            byteStream.write(intToByteArray(8 + tempStream.size()));
             byteStream.write(intToByteArray(type));
-            byteStream.write(intToByteArray(0));
-            byteStream.write(intToByteArray(children.size()));
             byteStream.write(tempStream.toByteArray());
             
         } catch (IOException ex) {
@@ -53,6 +49,7 @@ public class DREF extends FullBox{
 
     @Override
     public void loadData() {
+        
         int boxType;
         int offset = 0;
         int boxSize;

@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Iso2.Boxes;
+package Iso14496.Boxes;
 
 import Iso14496.Box;
-import Iso14496.IsoFile;
+import Iso14496.FullBox;
 import Iso14496.IsoReader;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -16,28 +16,25 @@ import java.util.logging.Logger;
  *
  * @author mac
  */
-public class MDAT extends Box{
-    byte[] data;
-    int dataLength;
-    int dataOffset;
-    
-    public MDAT() {
-        super(Box.MDAT);
-    }
-    
-    public void setData(byte[] data){
-        this.data = data;
+public class URL extends FullBox{
+    byte[] location = {};
+    public URL() {
+        super(Box.URL);
     }
 
     @Override
     public byte[] toBinary() {
+        
         try {
-            byteStream.write(intToByteArray(8 + data.length)); //type 
+            //byteStream.write(intToByteArray(12 + location.length)); //size
+            byteStream.write(intToByteArray(12 )); //size
             byteStream.write(intToByteArray(type)); //type 
-            byteStream.write(data); //type 
+            byteStream.write(intToByteArray(1)); //type 
+            //byteStream.write(location); //type 
         } catch (IOException ex) {
-            Logger.getLogger(MDAT.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(URL.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         return byteStream.toByteArray();
     }
 
@@ -51,17 +48,6 @@ public class MDAT extends Box{
         Class boxClass = null;
 
         internalSize = IsoReader.readIntAt(fileData, internalOffset + offset); //get box size
-        dataOffset = internalOffset + headerOffset;
-        dataLength = internalSize - headerOffset;
-        
-        
-    }
-    
-    
-    public String toString(){
-        
-        return IsoFile.toASCII(type) + " data length : " + dataLength;
-  
     }
     
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Iso2.Boxes;
+package Iso14496.Boxes;
 
 import Iso14496.Box;
 import Iso14496.IsoFile;

@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Iso2.Boxes;
+package Iso14496.Boxes;
 
 import Iso14496.Box;
 import Iso14496.FullBox;
 import Iso14496.IsoReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,44 +17,42 @@ import java.util.logging.Logger;
  *
  * @author mac
  */
-public class ELST extends FullBox{
-    int entry_count =1;
-    int segment_duration =13504;
-    int media_time =0;
-    short media_rate_integer = 1;
-    short media_rate_fraction = (short) 0;
-
-    public ELST() {
-        super(Box.ELST);
+public class DREF extends FullBox{
+    int entry_count;
+    
+    public DREF() {
+        super(Box.DREF);
     }
 
-    @Override
+        @Override
     public byte[] toBinary() {
-    
+        ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
+        if (children.size() > 0) {
+            for (Box box : children) {
+                try {
+                    tempStream.write(box.toBinary());
+                } catch (IOException ex) {
+                    Logger.getLogger(MOOV.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
         try {
-            byteStream.write(intToByteArray(28));
+            byteStream.write(intToByteArray(16 + tempStream.size()));
             byteStream.write(intToByteArray(type));
             byteStream.write(intToByteArray(0));
-            
-            byteStream.write(intToByteArray(entry_count));
-            byteStream.write(intToByteArray(segment_duration));
-            byteStream.write(intToByteArray(media_time));
-            
-            byteStream.write(shortToByteArray(media_rate_integer));
-            byteStream.write(shortToByteArray(media_rate_fraction));
-            
+            byteStream.write(intToByteArray(children.size()));
+            byteStream.write(tempStream.toByteArray());
             
         } catch (IOException ex) {
-            Logger.getLogger(ELST.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MOOV.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return byteStream.toByteArray();
-        
     }
 
     @Override
     public void loadData() {
-        
         int boxType;
         int offset = 0;
         int boxSize;

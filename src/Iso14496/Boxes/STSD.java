@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Iso2.Boxes;
+package Iso14496.Boxes;
 
 import Iso14496.Box;
+import Iso14496.FullBox;
 import Iso14496.IsoReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,10 +17,10 @@ import java.util.logging.Logger;
  *
  * @author mac
  */
-public class MINF extends Box{
+public class STSD extends FullBox{
 
-    public MINF() {
-        super(Box.MINF);
+    public STSD() {
+        super(Box.STSD);
     }
 
     @Override
@@ -36,8 +37,10 @@ public class MINF extends Box{
         }
         
         try {
-            byteStream.write(intToByteArray(8 + tempStream.size()));
+            byteStream.write(intToByteArray(12 + 4 +  tempStream.size()));
             byteStream.write(intToByteArray(type));
+            byteStream.write(intToByteArray(0));
+            byteStream.write(intToByteArray(children.size()));
             byteStream.write(tempStream.toByteArray());
             
         } catch (IOException ex) {

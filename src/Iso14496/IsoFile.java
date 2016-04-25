@@ -43,7 +43,7 @@ public class IsoFile {
         do{
             boxSize = IsoReader.readIntAt(fullData , offset ); //get box size
             boxType = IsoReader.readIntAt(fullData , offset + 4); // get box code
-            System.out.println(boxSize);
+
             //now lookup box code
             try {
                 

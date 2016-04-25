@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Iso2.Boxes;
+package Iso14496.Boxes;
 
 import Iso14496.Box;
+import Iso14496.FullBox;
 import Iso14496.IsoReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,35 +16,27 @@ import java.util.logging.Logger;
  *
  * @author mac
  */
-public class MOOV extends Box{
+public class STCO extends FullBox{
+    int entry_count = 1;
     
-    public MOOV() {
-        super(Box.MOOV);
+    public STCO() {
+        super(Box.STCO);
     }
 
     @Override
     public byte[] toBinary() {
-        ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
-        if (children.size() > 0) {
-            for (Box box : children) {
-                try {
-                    tempStream.write(box.toBinary());
-                } catch (IOException ex) {
-                    Logger.getLogger(MOOV.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-        
         try {
-            byteStream.write(intToByteArray(8 + tempStream.size()));
+            byteStream.write(intToByteArray(12 + 4 * entry_count + 4 ) );
             byteStream.write(intToByteArray(type));
-            byteStream.write(tempStream.toByteArray());
+            byteStream.write(intToByteArray(0));
+            byteStream.write(intToByteArray(entry_count));
+            
+            byteStream.write(intToByteArray(40)); // first offset
             
         } catch (IOException ex) {
-            Logger.getLogger(MOOV.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(STSZ.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        return byteStream.toByteArray();
+    return byteStream.toByteArray();
     }
 
     @Override

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Iso2.Boxes;
+package Iso14496.Boxes;
 
 import Iso14496.Box;
 import Iso14496.IsoReader;
@@ -16,13 +16,13 @@ import java.util.logging.Logger;
  *
  * @author mac
  */
-public class TRAK extends Box{
-    
-    public TRAK() {
-        super(Box.TRAK);
+public class STBL extends Box{
+
+    public STBL() {
+        super(Box.STBL);
     }
 
-    @Override
+        @Override
     public byte[] toBinary() {
         ByteArrayOutputStream tempStream = new ByteArrayOutputStream();
         if (children.size() > 0) {

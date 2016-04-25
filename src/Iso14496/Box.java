@@ -6,7 +6,7 @@
 package Iso14496;
 
 import static Iso14496.Box.*;
-import Iso2.Boxes.*;
+import Iso14496.Boxes.*;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -70,32 +70,32 @@ public abstract class Box {
 
         try {
 
-            table.put(FTYP, Iso2.Boxes.FTYP.class);
-            table.put(FREE, Iso2.Boxes.FREE.class);
-            table.put(MDAT, Iso2.Boxes.MDAT.class);
-            table.put(MOOV, Iso2.Boxes.MOOV.class);
-            table.put(MVHD, Iso2.Boxes.MVHD.class);
-            table.put(TRAK, Iso2.Boxes.TRAK.class);
-            table.put(TKHD, Iso2.Boxes.TKHD.class);
-            table.put(MDIA, Iso2.Boxes.MDIA.class);
-            table.put(MDHD, Iso2.Boxes.MDHD.class);
-            table.put(HDLR, Iso2.Boxes.HDLR.class);
-            //table.put(SOUN, Iso2.Boxes.SOUN.class);
-            table.put(MINF, Iso2.Boxes.MINF.class);
-            table.put(SMHD, Iso2.Boxes.SMHD.class);
-            table.put(DINF, Iso2.Boxes.DINF.class);
-            table.put(DREF, Iso2.Boxes.DREF.class);
-            table.put(URL, Iso2.Boxes.URL.class);
-            table.put(STBL, Iso2.Boxes.STBL.class);
-            table.put(STSD, Iso2.Boxes.STSD.class);
-            table.put(ESDS, Iso2.Boxes.ESDS.class);
-            table.put(STTS, Iso2.Boxes.STTS.class);
-            table.put(STSC, Iso2.Boxes.STSC.class);
-            table.put(STSZ, Iso2.Boxes.STSZ.class);
-            table.put(STCO, Iso2.Boxes.STCO.class);
-            table.put(MP4A, Iso2.Boxes.MP4A.class);
-            table.put(EDTS, Iso2.Boxes.EDTS.class);
-            table.put(ELST, Iso2.Boxes.ELST.class);
+            table.put(FTYP, Iso14496.Boxes.FTYP.class);
+            table.put(FREE, Iso14496.Boxes.FREE.class);
+            table.put(MDAT, Iso14496.Boxes.MDAT.class);
+            table.put(MOOV, Iso14496.Boxes.MOOV.class);
+            table.put(MVHD, Iso14496.Boxes.MVHD.class);
+            table.put(TRAK, Iso14496.Boxes.TRAK.class);
+            table.put(TKHD, Iso14496.Boxes.TKHD.class);
+            table.put(MDIA, Iso14496.Boxes.MDIA.class);
+            table.put(MDHD, Iso14496.Boxes.MDHD.class);
+            table.put(HDLR, Iso14496.Boxes.HDLR.class);
+            //table.put(SOUN, Iso14496.Boxes.SOUN.class);
+            table.put(MINF, Iso14496.Boxes.MINF.class);
+            table.put(SMHD, Iso14496.Boxes.SMHD.class);
+            table.put(DINF, Iso14496.Boxes.DINF.class);
+            table.put(DREF, Iso14496.Boxes.DREF.class);
+            table.put(URL, Iso14496.Boxes.URL.class);
+            table.put(STBL, Iso14496.Boxes.STBL.class);
+            table.put(STSD, Iso14496.Boxes.STSD.class);
+            table.put(ESDS, Iso14496.Boxes.ESDS.class);
+            table.put(STTS, Iso14496.Boxes.STTS.class);
+            table.put(STSC, Iso14496.Boxes.STSC.class);
+            table.put(STSZ, Iso14496.Boxes.STSZ.class);
+            table.put(STCO, Iso14496.Boxes.STCO.class);
+            table.put(MP4A, Iso14496.Boxes.MP4A.class);
+            table.put(EDTS, Iso14496.Boxes.EDTS.class);
+            table.put(ELST, Iso14496.Boxes.ELST.class);
             
 
 
