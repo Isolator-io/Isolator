@@ -5,10 +5,15 @@
  */
 package Iso14496;
 
+import static Iso14496.Box.*;
+import Iso2.Boxes.*;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -47,8 +52,60 @@ public abstract class Box {
      
     protected ByteArrayOutputStream byteStream;       
     protected ArrayList<Box> children;
+    protected Box container = null;
     protected int internalSize;
+    protected int internalOffset;
     protected int type;
+    protected byte[] fileData = null; //temp
+    
+    public static final Map<Integer, Class> boxTable = initializeTable();
+    
+    private static Map<Integer, Class> initializeTable() {
+
+        Map<Integer, Class> table = new HashMap<Integer, Class>();
+
+        try {
+
+            table.put(FTYP, Iso2.Boxes.FTYP.class);
+            table.put(FREE, Iso2.Boxes.FREE.class);
+            table.put(MDAT, Iso2.Boxes.MDAT.class);
+            table.put(MOOV, Iso2.Boxes.MOOV.class);
+            table.put(MVHD, Iso2.Boxes.MVHD.class);
+            table.put(TRAK, Iso2.Boxes.TRAK.class);
+            table.put(TKHD, Iso2.Boxes.TKHD.class);
+            table.put(MDIA, Iso2.Boxes.MDIA.class);
+            table.put(MDHD, Iso2.Boxes.MDHD.class);
+            table.put(HDLR, Iso2.Boxes.HDLR.class);
+            //table.put(SOUN, Iso2.Boxes.SOUN.class);
+            table.put(MINF, Iso2.Boxes.MINF.class);
+            table.put(SMHD, Iso2.Boxes.SMHD.class);
+            table.put(DINF, Iso2.Boxes.DINF.class);
+            table.put(DREF, Iso2.Boxes.DREF.class);
+            table.put(URL, Iso2.Boxes.URL.class);
+            table.put(STBL, Iso2.Boxes.STBL.class);
+            table.put(STSD, Iso2.Boxes.STSD.class);
+            table.put(ESDS, Iso2.Boxes.ESDS.class);
+            table.put(STTS, Iso2.Boxes.STTS.class);
+            table.put(STSC, Iso2.Boxes.STSC.class);
+            table.put(STSZ, Iso2.Boxes.STSZ.class);
+            table.put(STCO, Iso2.Boxes.STCO.class);
+            table.put(MP4A, Iso2.Boxes.MP4A.class);
+            table.put(EDTS, Iso2.Boxes.EDTS.class);
+            table.put(ELST, Iso2.Boxes.ELST.class);
+            
+
+
+ 
+
+
+        } catch (Exception e) {
+            
+            System.out.println("couldnt add " + e.getMessage());
+        }
+
+        return Collections.unmodifiableMap(table);
+
+    }
     
   
     public Box(int boxType){
@@ -82,17 +139,37 @@ public abstract class Box {
     
     public abstract byte[] toBinary();
     
+    public int getBoxType(){
+        return type;
+    }
+    
+    public abstract void loadData();
+            
+    public void setSize(int size){
+        internalSize = size;
+    }
+    
+    public void setOffset(int offset){
+        internalOffset = offset;
+    }
+    
+    public void setFileData(byte[] data){
+        fileData = data;
+    }
+    
+    public int getDepth(){
+        if(container == null){
+            return 1;
+        }else{
+            return container.getDepth();
+        }
+    }
     
     /*
     public Box(String boxtype){
         byte[] bytes = boxtype.getBytes(StandardCharsets.UTF_8);
         type = ByteBuffer.wrap(bytes).getInt();
     }
-    */
-    //Page 6
-    /**
-     * Boxes start with a header which gives both size and type. The header permits compact or extended size (32 or 64 bits) and compact or extended types (32 bits or full Universal Unique IDentifiers, i.e. UUIDs). The standard boxes all use compact types (32‐bit) and most boxes will use the compact (32‐bit) size. Typically only the Media Data Box(es) need the 64‐bit size.
-The size is the entire size of the box, including the size and type header, fields, and all contained boxes. This facilitates general parsing of the file.
-     */
-    
+*/
+
 }

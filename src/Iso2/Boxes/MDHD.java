@@ -7,6 +7,7 @@ package Iso2.Boxes;
 
 import Iso14496.Box;
 import Iso14496.FullBox;
+import Iso14496.IsoReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,6 +50,18 @@ public class MDHD extends FullBox{
         
         System.out.println("total mdhd header size :" + byteStream.size());
         return byteStream.toByteArray();
+    }
+
+    @Override
+    public void loadData() {
+        
+        int boxType;
+        int offset = 0;
+        int boxSize;
+        Box box = null;
+        Class boxClass = null;
+
+        internalSize = IsoReader.readIntAt(fileData, internalOffset + offset); //get box size
     }
     
 }

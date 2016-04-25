@@ -1,5 +1,6 @@
 
 import Iso14496.Iso;
+import Iso14496.IsoFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class Main {
         }
         
         
-        Iso iso = new Iso(videoFile);//Iso(new FileInputStream(videoFilePath).getChannel());
+        //Iso iso = new Iso(videoFile);//Iso(new FileInputStream(videoFilePath).getChannel());
+        IsoFile isoFile = new IsoFile(videoFile);
     }
 }
