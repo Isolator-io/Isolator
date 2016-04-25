@@ -43,7 +43,7 @@ public class IsoFile {
         do{
             boxSize = IsoReader.readIntAt(fullData , offset ); //get box size
             boxType = IsoReader.readIntAt(fullData , offset + 4); // get box code
-            
+            System.out.println(boxSize);
             //now lookup box code
             try {
                 
@@ -75,7 +75,7 @@ public class IsoFile {
     }
     
     //FOR TESTING ONLY
-    private static String toASCII(int value) {
+    public static String toASCII(int value) {
         int length = 4;
         StringBuilder builder = new StringBuilder(length);
         for (int i = length - 1; i >= 0; i--) {
@@ -88,7 +88,8 @@ public class IsoFile {
         
         for( Box box: boxes){
             
-            System.out.println("box :" +  toASCII(box.getBoxType()));
+            //System.out.println("box :" +  toASCII(box.getBoxType()));
+            box.displayData();
             
         }
     

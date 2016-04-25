@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,9 +55,12 @@ public abstract class Box {
     protected ArrayList<Box> children;
     protected Box container = null;
     protected int internalSize;
+    protected long internalExtendedSize;
     protected int internalOffset;
     protected int type;
     protected byte[] fileData = null; //temp
+    protected boolean isExtendedSize = false;
+    protected int headerOffset;
     
     public static final Map<Integer, Class> boxTable = initializeTable();
     
@@ -112,7 +116,7 @@ public abstract class Box {
         children = new ArrayList<Box>();
         byteStream = new ByteArrayOutputStream();
         type = boxType;
-        
+        headerOffset = 8;
     }
     
     public void addBox(Box boxToAdd){
@@ -161,8 +165,20 @@ public abstract class Box {
         if(container == null){
             return 1;
         }else{
-            return container.getDepth();
+            return 1 + container.getDepth();
         }
+    }
+    
+    public void displayData() {
+        int n = getDepth();
+        char[] chars = new char[n];
+        Arrays.fill(chars, '-');
+        String indent = new String(chars);
+        System.out.println(indent+ "> " + toString());
+    }
+    
+    public String toString(){
+        return IsoFile.toASCII(type);
     }
     
     /*

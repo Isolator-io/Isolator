@@ -15,6 +15,7 @@ public abstract class FullBox extends Box{
 
     public FullBox(int boxtype) {
         super(boxtype);
+        headerOffset = 12;
     }
     
 

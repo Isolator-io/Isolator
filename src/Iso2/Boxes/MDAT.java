@@ -6,6 +6,7 @@
 package Iso2.Boxes;
 
 import Iso14496.Box;
+import Iso14496.IsoFile;
 import Iso14496.IsoReader;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -17,6 +18,8 @@ import java.util.logging.Logger;
  */
 public class MDAT extends Box{
     byte[] data;
+    int dataLength;
+    int dataOffset;
     
     public MDAT() {
         super(Box.MDAT);
@@ -48,6 +51,17 @@ public class MDAT extends Box{
         Class boxClass = null;
 
         internalSize = IsoReader.readIntAt(fileData, internalOffset + offset); //get box size
+        dataOffset = internalOffset + headerOffset;
+        dataLength = internalSize - headerOffset;
+        
+        
+    }
+    
+    
+    public String toString(){
+        
+        return IsoFile.toASCII(type) + " data length : " + dataLength;
+  
     }
     
 }

@@ -6,6 +6,7 @@
 package Iso2.Boxes;
 
 import Iso14496.Box;
+import Iso14496.IsoFile;
 import Iso14496.IsoReader;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -17,12 +18,17 @@ import java.util.logging.Logger;
  */
 public class FTYP extends Box{
     int major_brand;
+    int major_brand_offset;
     int minor_version;
+    int minor_version_offset;
     int[] compatible_brands; // to end of the box
+    int compatible_brands_offset;
+    
 
 
     public FTYP() {
         super(Box.FTYP);
+        headerOffset = 8; // default for the normal size
     }
     
     public void setMajorBrand(int brand){
@@ -82,11 +88,34 @@ public class FTYP extends Box{
         Class boxClass = null;
 
         internalSize = IsoReader.readIntAt(fileData, internalOffset + offset); //get box size
+        if(internalSize == 1){
+            isExtendedSize = true;
+            headerOffset = 8 + 16; // total bytes with extended header
+        }
+        
+        major_brand = IsoReader.readIntAt(fileData, internalOffset + headerOffset); //get box size
+        minor_version = IsoReader.readIntAt(fileData, internalOffset + headerOffset + 4);
+        
+        int totalCompatibleBrands = (internalSize - headerOffset - 8) / 4;
+        compatible_brands = new int[totalCompatibleBrands];
+        for(int n = 0; n < totalCompatibleBrands; n++){
+            compatible_brands[n] = IsoReader.readIntAt(fileData, internalOffset + headerOffset + 8);
+        }
+        
+        
+        
+        
+        
         
       
     }
     
         
+    public String toString(){
+        return IsoFile.toASCII(type) + " major brand: " + IsoFile.toASCII(major_brand)
+                + ", minor version : " + minor_version;
+  
+    }
     
     
 }
