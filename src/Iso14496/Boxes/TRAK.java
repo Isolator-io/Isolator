@@ -16,8 +16,8 @@ import java.util.logging.Logger;
  *
  * @author mac
  */
-public class TRAK extends Box{
-    
+public class TRAK extends Box {
+
     public TRAK() {
         super(Box.TRAK);
     }
@@ -34,22 +34,22 @@ public class TRAK extends Box{
                 }
             }
         }
-        
+
         try {
             byteStream.write(intToByteArray(8 + tempStream.size()));
             byteStream.write(intToByteArray(type));
             byteStream.write(tempStream.toByteArray());
-            
+
         } catch (IOException ex) {
             Logger.getLogger(MOOV.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return byteStream.toByteArray();
     }
 
     @Override
     public void loadData() {
-        
+
         int boxType;
         int offset = 0;
         int boxSize;
@@ -57,6 +57,38 @@ public class TRAK extends Box{
         Class boxClass = null;
 
         internalSize = IsoReader.readIntAt(fileData, internalOffset + offset); //get box size
+
+        offset += 8; //Account for head length
+        //Now Find boxes inside MOOV
+        do {
+            boxSize = IsoReader.readIntAt(fileData, internalOffset + offset); //get box size
+            boxType = IsoReader.readIntAt(fileData, internalOffset + offset + 4); // get box code
+            //System.out.println(IsoFile.toASCII(boxType));
+            //System.out.println(boxSize);
+
+            //now lookup box code
+            try {
+
+                boxClass = Box.boxTable.get(boxType);
+                if (boxClass != null) {
+
+                    box = (Box) boxClass.newInstance();
+                    box.setOffset(internalOffset + offset);
+                    box.setFileData(fileData);
+                    box.setContainer(this);
+                    box.loadData();
+
+                    children.add(box);
+                }
+
+            } catch (InstantiationException | IllegalAccessException ex) {
+                System.out.println("box code not found");
+            }
+
+            //System.out.println("box length: " + boxSize + " box code:" + toASCII(boxCode));
+            offset = offset + boxSize;
+
+        } while (offset < internalSize);
     }
-    
+
 }

@@ -22,6 +22,7 @@ public class MDHD extends FullBox{
     int timescale = 0x0000BB80;
     int duration = 0x0009E400;
     short language = 0x55C4;
+ 
       
 
     public MDHD() {
@@ -62,6 +63,8 @@ public class MDHD extends FullBox{
         Class boxClass = null;
 
         internalSize = IsoReader.readIntAt(fileData, internalOffset + offset); //get box size
+        
+
     }
     
 }

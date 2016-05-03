@@ -24,4 +24,13 @@ public class IsoReader {
         
     }
     
+        public static short readShortAt(byte[] fullData, int i) {
+        byte[] bytes = new byte[2];
+        bytes[0] = fullData[i];
+        bytes[1] = fullData[i+1];
+
+       return ByteBuffer.wrap(bytes).getShort();
+        
+    }
+    
 }
