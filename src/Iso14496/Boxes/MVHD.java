@@ -85,7 +85,7 @@ public class MVHD extends FullBox {
         Box box = null;
         Class boxClass = null;
 
-        internalSize = IsoReader.readIntAt(fileData, internalOffset + offset); //get box size
+        internalSize = IsoReader.readIntAt(fileData, internalOffset); //get box size
 
         creation_time = IsoReader.readIntAt(fileData, internalOffset + 12);
         modification_time = IsoReader.readIntAt(fileData, internalOffset + 16);
@@ -94,7 +94,7 @@ public class MVHD extends FullBox {
         rate = IsoReader.readIntAt(fileData, internalOffset + 28);
         volume = IsoReader.readShortAt(fileData, internalOffset + 32);
 
-        next_track_ID = IsoReader.readShortAt(fileData, internalOffset + 104);
+        next_track_ID = IsoReader.readIntAt(fileData, internalOffset + 104);
     }
 
     public String toString() {

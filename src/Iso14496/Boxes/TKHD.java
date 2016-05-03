@@ -7,6 +7,7 @@ package Iso14496.Boxes;
 
 import Iso14496.Box;
 import Iso14496.FullBox;
+import Iso14496.IsoFile;
 import Iso14496.IsoReader;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -87,6 +88,19 @@ public class TKHD extends FullBox{
         Class boxClass = null;
 
         internalSize = IsoReader.readIntAt(fileData, internalOffset + offset); //get box size
+        
+        creation_time = IsoReader.readIntAt(fileData, internalOffset +12); //get box size
+        modification_time = IsoReader.readIntAt(fileData, internalOffset +16); //get box size
+        track_ID = IsoReader.readIntAt(fileData, internalOffset +20);
+
+        duration = IsoReader.readIntAt(fileData, internalOffset +28);
+
+    }
+    
+    public String toString() {
+
+        return IsoFile.toASCII(type) + " track ID : " + track_ID;
+
     }
     
 }
