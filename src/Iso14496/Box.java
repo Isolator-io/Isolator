@@ -175,6 +175,10 @@ public abstract class Box {
         Arrays.fill(chars, '-');
         String indent = new String(chars);
         System.out.println(indent+ "> " + toString());
+        
+        for(Box child : children){
+            child.displayData();
+        }
     }
     
     public String toString(){
@@ -187,5 +191,9 @@ public abstract class Box {
         type = ByteBuffer.wrap(bytes).getInt();
     }
 */
+    
+    public void setContainer(Box container){
+        this.container = container;
+    }
 
 }
