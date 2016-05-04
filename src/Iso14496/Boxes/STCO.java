@@ -7,6 +7,7 @@ package Iso14496.Boxes;
 
 import Iso14496.Box;
 import Iso14496.FullBox;
+import Iso14496.IsoFile;
 import Iso14496.IsoReader;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -18,10 +19,12 @@ import java.util.logging.Logger;
  */
 public class STCO extends FullBox{
     int entry_count = 1;
+    int[] chunk_offset;
     
     public STCO() {
         super(Box.STCO);
     }
+    
 
     @Override
     public byte[] toBinary() {
@@ -41,14 +44,30 @@ public class STCO extends FullBox{
 
     @Override
     public void loadData() {
-        
-        int boxType;
-        int offset = 0;
-        int boxSize;
-        Box box = null;
-        Class boxClass = null;
 
-        internalSize = IsoReader.readIntAt(fileData, internalOffset + offset); //get box size
+        internalSize = IsoReader.readIntAt(fileData, internalOffset); //get box size
+        entry_count = IsoReader.readIntAt(fileData, internalOffset + 12);
+        
+        chunk_offset= new int[entry_count];
+        
+        for(int n = 0; n < entry_count; n++){
+            chunk_offset[n] = IsoReader.readIntAt(fileData, internalOffset + 12 + (n*4));
+        }
+    }
+    
+    
+    public String toString() {
+
+        return IsoFile.toASCII(type) + " chunk count : " + entry_count;
+
+    }
+    
+    public int getChunkCount(){
+        return entry_count;
+    }
+    
+    public int[] getChunkOffsets(){
+        return chunk_offset;
     }
     
 }

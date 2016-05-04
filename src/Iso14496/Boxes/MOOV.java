@@ -97,4 +97,23 @@ public class MOOV extends Box {
         return IsoFile.toASCII(type) + " internal length : " + internalSize;
 
     }
+    
+    public TRAK getAudioTrack(){
+        TRAK audioTrack = null;
+        
+        for(Box box : children){
+            
+            if(box.getBoxType() == Box.TRAK){
+                
+                
+                if(((TRAK) box).getTrackID() ==2){
+                   audioTrack = (TRAK) box;
+                    break; 
+                }
+                
+            }
+            
+        }
+        return audioTrack;
+    }
 }

@@ -103,4 +103,23 @@ public class TKHD extends FullBox{
 
     }
     
+    public int getTrackID(){
+        return track_ID;
+    }
+    
+    public int getChunkCount(){
+        
+        for (Box box : children) {
+
+            if (box.getBoxType() == Box.MDIA) {
+
+                return ((MDIA) box).getChunkCount();
+
+            }
+
+        }
+    
+        return 0;
+    }
+    
 }

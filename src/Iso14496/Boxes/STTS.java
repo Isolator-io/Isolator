@@ -53,6 +53,8 @@ public class STTS extends FullBox{
         Class boxClass = null;
 
         internalSize = IsoReader.readIntAt(fileData, internalOffset + offset); //get box size
+        
+        entry_count = IsoReader.readIntAt(fileData, internalOffset + 12); 
     }
     
 }

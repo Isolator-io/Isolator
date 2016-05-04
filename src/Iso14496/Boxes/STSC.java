@@ -7,6 +7,7 @@ package Iso14496.Boxes;
 
 import Iso14496.Box;
 import Iso14496.FullBox;
+import Iso14496.IsoFile;
 import Iso14496.IsoReader;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -18,6 +19,7 @@ import java.util.logging.Logger;
  */
 public class STSC extends FullBox{
     int entry_count = 1;
+    int[][] sample_chunk_table;
     
     
     public STSC() {
@@ -57,6 +59,23 @@ public class STSC extends FullBox{
         Class boxClass = null;
 
         internalSize = IsoReader.readIntAt(fileData, internalOffset + offset); //get box size
+        
+        entry_count = IsoReader.readIntAt(fileData, internalOffset + 12); 
+        sample_chunk_table = new int[entry_count][3];
+        
+        for(int n = 0; n < entry_count; n++){
+            sample_chunk_table[n][0] = IsoReader.readIntAt(fileData, internalOffset + 12 + (n * 12));
+            sample_chunk_table[n][1] = IsoReader.readIntAt(fileData, internalOffset + 12 + (n * 12) + 4);
+            sample_chunk_table[n][2] = IsoReader.readIntAt(fileData, internalOffset + 12 + (n * 12) + 8);
+        }
+                
+    }
+    
+    
+    public String toString() {
+
+        return IsoFile.toASCII(type) + " entry count : " + entry_count;
+
     }
     
 }

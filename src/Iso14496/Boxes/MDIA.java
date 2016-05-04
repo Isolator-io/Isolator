@@ -91,4 +91,34 @@ public class MDIA extends Box{
         } while (offset < internalSize);
     }
     
+    
+    public int getChunkCount(){
+        for (Box box : children) {
+
+            if (box.getBoxType() == Box.MINF) {
+
+                return ((MINF) box).getChunkCount();
+
+            }
+
+        }
+
+        return 0;
+    }
+    
+    
+    
+    public int[] getChunkOffsets() {
+        for (Box box : children) {
+
+            if (box.getBoxType() == Box.MINF) {
+
+                return ((MINF) box).getChunkOffsets();
+
+            }
+
+        }
+
+        return null;
+    }
 }

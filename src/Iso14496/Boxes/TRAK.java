@@ -90,5 +90,50 @@ public class TRAK extends Box {
 
         } while (offset < internalSize);
     }
+    
+    
+    public int getTrackID() {
 
+        for (Box box : children) {
+
+            if (box.getBoxType() == Box.TKHD) {
+
+                return ((TKHD) box).getTrackID();
+
+            }
+
+        }
+        
+        return 0;
+    }
+
+    
+    public int getChunkCount(){
+        for (Box box : children) {
+
+            if (box.getBoxType() == Box.MDIA) {
+
+                return ((MDIA) box).getChunkCount();
+
+            }
+
+        }
+
+        return 0;
+    }
+    
+    
+    public int[] getChunkOffsets() {
+        for (Box box : children) {
+
+            if (box.getBoxType() == Box.MDIA) {
+
+                return ((MDIA) box).getChunkOffsets();
+
+            }
+
+        }
+
+        return null;
+    }
 }

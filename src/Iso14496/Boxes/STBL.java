@@ -6,6 +6,7 @@
 package Iso14496.Boxes;
 
 import Iso14496.Box;
+import Iso14496.IsoFile;
 import Iso14496.IsoReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class STBL extends Box{
                 }
 
             } catch (InstantiationException | IllegalAccessException ex) {
-                System.out.println("box code not found");
+                System.out.println("box code not found :" + IsoFile.toASCII(boxType));
             }
 
             //System.out.println("box length: " + boxSize + " box code:" + toASCII(boxCode));
@@ -91,4 +92,35 @@ public class STBL extends Box{
         } while (offset < internalSize);
     }
     
+    
+    
+    public int getChunkCount() {
+        for (Box box : children) {
+
+            if (box.getBoxType() == Box.STCO) {
+
+                return ((STCO) box).getChunkCount();
+
+            }
+
+        }
+
+        return 0;
+    }
+    
+    
+    public int[] getChunkOffsets() {
+        for (Box box : children) {
+
+            if (box.getBoxType() == Box.STCO) {
+
+                return ((STCO) box).getChunkOffsets();
+
+            }
+
+        }
+
+        return null;
+    }
+
 }

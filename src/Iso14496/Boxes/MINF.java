@@ -91,4 +91,34 @@ public class MINF extends Box{
         } while (offset < internalSize);
     }
     
+    
+    public int getChunkCount() {
+        for (Box box : children) {
+
+            if (box.getBoxType() == Box.STBL) {
+
+                return ((STBL) box).getChunkCount();
+
+            }
+
+        }
+
+        return 0;
+    }
+    
+    
+    public int[] getChunkOffsets() {
+        for (Box box : children) {
+
+            if (box.getBoxType() == Box.STBL) {
+
+                return ((STBL) box).getChunkOffsets();
+
+            }
+
+        }
+
+        return null;
+    }
+
 }

@@ -40,6 +40,8 @@ public class Main {
         
         
         //Iso iso = new Iso(videoFile);//Iso(new FileInputStream(videoFilePath).getChannel());
+        
         IsoFile isoFile = new IsoFile(videoFile);
+        IsoFile rippedAudio = IsoFile.ripAudio(isoFile);
     }
 }
