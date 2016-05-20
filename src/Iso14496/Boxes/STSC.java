@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 public class STSC extends FullBox{
     int entry_count = 1;
     int[][] sample_chunk_table;
+    int[] chunkRuns;
     
     
     public STSC() {
@@ -62,12 +63,21 @@ public class STSC extends FullBox{
         
         entry_count = IsoReader.readIntAt(fileData, internalOffset + 12); 
         sample_chunk_table = new int[entry_count][3];
+        int[] chunkRuns = new int[entry_count];
         
         for(int n = 0; n < entry_count; n++){
             sample_chunk_table[n][0] = IsoReader.readIntAt(fileData, internalOffset + 12 + (n * 12));
             sample_chunk_table[n][1] = IsoReader.readIntAt(fileData, internalOffset + 12 + (n * 12) + 4);
             sample_chunk_table[n][2] = IsoReader.readIntAt(fileData, internalOffset + 12 + (n * 12) + 8);
+            
+            if(n >0){
+                chunkRuns[n-1] = sample_chunk_table[n][0] - sample_chunk_table[n-1][0];
+            }
+                        
         }
+        
+        chunkRuns[entry_count-1] = getChunkCount() - sample_chunk_table[entry_count-1][0];
+        //Runs calculated
                 
     }
     
@@ -76,6 +86,16 @@ public class STSC extends FullBox{
 
         return IsoFile.toASCII(type) + " entry count : " + entry_count;
 
+    }
+    
+    private int getChunkCount(){
+        
+        
+        return ((STBL)container).getChunkCount();
+    }
+    
+    public int[] getChunkRuns(){
+        return chunkRuns;
     }
     
 }

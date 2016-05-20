@@ -90,8 +90,7 @@ public class TRAK extends Box {
 
         } while (offset < internalSize);
     }
-    
-    
+
     public int getTrackID() {
 
         for (Box box : children) {
@@ -103,12 +102,11 @@ public class TRAK extends Box {
             }
 
         }
-        
+
         return 0;
     }
 
-    
-    public int getChunkCount(){
+    public int getChunkCount() {
         for (Box box : children) {
 
             if (box.getBoxType() == Box.MDIA) {
@@ -121,8 +119,7 @@ public class TRAK extends Box {
 
         return 0;
     }
-    
-    
+
     public int[] getChunkOffsets() {
         for (Box box : children) {
 
@@ -135,5 +132,48 @@ public class TRAK extends Box {
         }
 
         return null;
+    }
+
+    public byte[] getMdatRawBinary() {
+
+        ByteArrayOutputStream byteStreamBuilder = new ByteArrayOutputStream();
+        int stcoChunkCount = getChunkCount();
+        int[][] rawMdatBinary = new int[stcoChunkCount][3];
+
+        int[] offsets = getChunkOffsets();
+
+        for (int n = 0; n < stcoChunkCount; n++) {
+            rawMdatBinary[n][0] = offsets[n];
+        }
+
+        int currentIndex = 0;
+        int currentSampleIndex = 0;
+        /*
+        for (int n = 0; n < stscEntryCount; n++) {
+            //chunkRuns[n]
+            for (int i = 0; i < chunkRuns[n]; i++) {
+                rawMdatBinary[currentIndex][1] = sampleTableBox[n][1];
+                rawMdatBinary[currentIndex][2] = 0;
+                for (int m = 0; m < sampleTableBox[n][1]; m++) {
+                    rawMdatBinary[currentIndex][2] += sampleSizes[currentSampleIndex];
+                    currentSampleIndex++;
+                }
+
+                currentIndex++;
+            }
+            //totalData[n][1] = 0; //Set num samples per chunk
+        }
+*/
+
+        for (int n = 0; n < stcoChunkCount; n++) {
+            //[n][0] offset
+            //[n][2] byte count
+
+            byteStreamBuilder.write(fileData, rawMdatBinary[n][0], rawMdatBinary[n][2]);
+            //fop.write(fullData, 0 , 20);
+        }
+
+        return byteStreamBuilder.toByteArray();
+
     }
 }
