@@ -170,6 +170,7 @@ public abstract class Box {
     }
     
     public void displayData() {
+        
         int n = getDepth();
         char[] chars = new char[n];
         Arrays.fill(chars, '-');
@@ -179,6 +180,7 @@ public abstract class Box {
         for(Box child : children){
             child.displayData();
         }
+        
     }
     
     public String toString(){

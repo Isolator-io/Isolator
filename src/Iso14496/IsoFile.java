@@ -34,78 +34,79 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author mac
  */
 public class IsoFile {
+
     byte[] fullData;
     int size;
+    long fileSize;
     protected ArrayList<Box> boxes;
     protected ByteArrayOutputStream byteStream;
-    
-    public IsoFile(){
+    RandomAccessFile randomAccessFile;
+
+    public IsoFile() {
         byteStream = new ByteArrayOutputStream();
+
     }
-    
-    
-    
+
     public IsoFile(File videoFile) throws FileNotFoundException, IOException {
+
         byteStream = new ByteArrayOutputStream();
+        randomAccessFile = new RandomAccessFile(videoFile.getPath(), "r");
         boxes = new ArrayList<Box>();
         fullData = Files.readAllBytes(videoFile.toPath());
         loadData();
         displayBoxes();
-    
+
     }
-    
-    private void loadData(){
+
+    private void loadData() throws IOException {
+
+        fileSize = randomAccessFile.length();
         int boxType;
-        int offset = 0;
+        long offset = 0;
         int boxSize;
         Box box = null;
         Class boxClass = null;
-        
-        
-        do{
-            boxSize = IsoReader.readIntAt(fullData , offset ); //get box size
-            boxType = IsoReader.readIntAt(fullData , offset + 4); // get box code
+
+        //Read all top level boxes
+        do {
+
+            randomAccessFile.seek(offset);
+            boxSize = randomAccessFile.readInt();
+            boxType = randomAccessFile.readInt();
 
             //now lookup box code
             try {
-                
+
                 boxClass = Box.boxTable.get(boxType);
                 if (boxClass != null) {
 
                     box = (Box) boxClass.newInstance();
-                    box.setOffset(offset);
+                    box.setOffset((int) offset);
                     box.setFileData(fullData);
                     box.loadData();
-                    
-                    
+
                     boxes.add(box);
                 }
-                
+
             } catch (InstantiationException | IllegalAccessException ex) {
                 System.out.println("box code not found");
             }
-                
-            
-      
-            
-            //System.out.println("box length: " + boxSize + " box code:" + toASCII(boxCode));
-            
-            offset = offset + boxSize;
-            
-        }while(offset < fullData.length);
-        
+
+            offset = (int) randomAccessFile.getFilePointer() + boxSize;
+
+        } while (offset < fileSize);
+
     }
-    
+
     //FOR TESTING ONLY
     public static String toASCII(int value) {
         int length = 4;
@@ -115,58 +116,55 @@ public class IsoFile {
         }
         return builder.toString();
     }
-    
-    public void displayBoxes(){
-        
-        for( Box box: boxes){
-            
+
+    public void displayBoxes() {
+
+        for (Box box : boxes) {
+
             //System.out.println("box :" +  toASCII(box.getBoxType()));
             box.displayData();
-            
+
         }
-    
-        
+
     }
-    
-    public void addBox(Box box){
+
+    public void addBox(Box box) {
         boxes.add(box);
     }
-    
-    public TRAK getAudioTrack(){
+
+    public TRAK getAudioTrack() {
         TRAK audioTrack = null;
-        
-        for(Box box : boxes){
-            
-            if(box.getBoxType() == Box.MOOV){
+
+        for (Box box : boxes) {
+
+            if (box.getBoxType() == Box.MOOV) {
                 audioTrack = ((MOOV) box).getAudioTrack();
                 break;
             }
-            
+
         }
         return audioTrack;
     }
-    
-    
+
     public static IsoFile ripAudio(IsoFile inputFile) {
-        
-        ByteArrayOutputStream byteStreamBuilder = new ByteArrayOutputStream(); 
-        
+
+        ByteArrayOutputStream byteStreamBuilder = new ByteArrayOutputStream();
+
         TRAK audioTrack = inputFile.getAudioTrack();
-       
 
         IsoFile isoFile = new IsoFile();
         System.out.println("ripped chunk count : " + audioTrack.getChunkCount());
-       
+
         int stcoChunkCount = audioTrack.getChunkCount();
-        int[][] rippedBinary = new int[stcoChunkCount][3];  
-        
+        int[][] rippedBinary = new int[stcoChunkCount][3];
+
         int[] offsets = audioTrack.getChunkOffsets();
-        
-        for (int n =0; n < stcoChunkCount; n++){
+
+        for (int n = 0; n < stcoChunkCount; n++) {
             rippedBinary[n][0] = offsets[n];
         }
-        
-         /*
+
+        /*
                     for (int n = 0; n < stcoChunkCount; n++) {
          
                 
@@ -177,7 +175,7 @@ public class IsoFile {
         
          */
 
-        /*
+ /*
         FREE free = new FREE();
         //free.setData(new byte[4]);
 
@@ -240,16 +238,16 @@ public class IsoFile {
         stbl.addBox(stsc2);
         stbl.addBox(stsz2);
         stbl.addBox(stco2);
-*/
+         */
         return isoFile;
     }
-    
-    public byte[] toBinary() throws IOException{
-        
-        for(Box box : boxes){
+
+    public byte[] toBinary() throws IOException {
+
+        for (Box box : boxes) {
             byteStream.write(box.toBinary());
         }
         return byteStream.toByteArray();
     }
-    
+
 }
